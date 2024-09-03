@@ -1,3 +1,4 @@
+// src/index.ts
 import fs from 'fs';
 import path from 'path';
 import { Project, SourceFile } from 'ts-morph';
@@ -12,33 +13,27 @@ export class ImportManager {
   private project: Project;
   private packageJson: PackageJson;
   private usedPackages: Set<string> = new Set();
-  private essentialDevDependencies: Set<string> = new Set(['typescript', '@types/node']);
+  private essentialNextJSDependencies: Set<string> = new Set([
+    'next',
+    'react',
+    'react-dom',
+    '@types/react',
+    '@types/react-dom',
+    '@types/node',
+    'typescript',
+    'eslint',
+    'eslint-config-next'
+  ]);
 
   constructor(private projectPath: string = process.cwd()) {
     this.project = new Project({
       tsConfigFilePath: path.join(this.projectPath, 'tsconfig.json'),
     });
     this.packageJson = JSON.parse(fs.readFileSync(path.join(this.projectPath, 'package.json'), 'utf-8'));
-    this.initializeEssentialDependencies();
-  }
-
-  private initializeEssentialDependencies() {
-    this.essentialDevDependencies.add('typescript');
-    if (this.packageJson.dependencies['react'] || this.packageJson.devDependencies['react']) {
-      this.essentialDevDependencies.add('@types/react');
-      this.essentialDevDependencies.add('@types/react-dom');
-    }
-    if (this.packageJson.dependencies['vue'] || this.packageJson.devDependencies['vue']) {
-      this.essentialDevDependencies.add('@vue/compiler-sfc');
-    }
-    if (this.packageJson.dependencies['angular'] || this.packageJson.devDependencies['@angular/core']) {
-      this.essentialDevDependencies.add('@angular/compiler-cli');
-    }
-    // TODO : Add more framework-specific checks as needed
   }
 
   public run() {
-    console.log('Analyzing imports...');
+    console.log('Analyzing imports ...');
     this.analyzeImports();
     console.log('Updating dependencies...');
     this.updateDependencies();
@@ -61,41 +56,32 @@ export class ImportManager {
   }
 
   private updateDependencies() {
-    const devDeps = Object.keys(this.packageJson.devDependencies || {});
-    const deps = Object.keys(this.packageJson.dependencies || {});
+    const allDeps = { ...this.packageJson.dependencies, ...this.packageJson.devDependencies };
+    const deps = Object.keys(allDeps);
 
-    const unusedDevDeps = devDeps.filter((dep) => 
-      !this.usedPackages.has(dep) && !this.essentialDevDependencies.has(dep)
+    const unusedDeps = deps.filter((dep) => 
+      !this.usedPackages.has(dep) && !this.essentialNextJSDependencies.has(dep)
     );
-    const missingDevDeps = Array.from(this.usedPackages).filter(
-      (dep) => !devDeps.includes(dep) && !deps.includes(dep)
+    const missingDeps = Array.from(this.usedPackages).filter(
+      (dep) => !deps.includes(dep)
     );
 
-    if (unusedDevDeps.length > 0) {
-      console.log('Removing unused dev dependencies:', unusedDevDeps.join(', '));
-      this.uninstallPackages(unusedDevDeps);
+    if (unusedDeps.length > 0) {
+      console.log('Removing unused dependencies:', unusedDeps.join(', '));
+      this.uninstallPackages(unusedDeps);
     }
 
-    if (missingDevDeps.length > 0) {
-      console.log('Installing missing dev dependencies:', missingDevDeps.join(', '));
-      this.installPackages(missingDevDeps);
-    }
-
-    // Ensure essential dev dependencies are installed
-    const missingEssentialDevDeps = Array.from(this.essentialDevDependencies).filter(
-      (dep) => !devDeps.includes(dep) && !deps.includes(dep)
-    );
-    if (missingEssentialDevDeps.length > 0) {
-      console.log('Installing essential dev dependencies:', missingEssentialDevDeps.join(', '));
-      this.installPackages(missingEssentialDevDeps);
+    if (missingDeps.length > 0) {
+      console.log('Installing missing dependencies:', missingDeps.join(', '));
+      this.installPackages(missingDeps);
     }
   }
 
   private uninstallPackages(packages: string[]) {
-    execSync(`npm uninstall ${packages.join(' ')} --save-dev`, { cwd: this.projectPath });
+    execSync(`npm uninstall ${packages.join(' ')}`, { cwd: this.projectPath });
   }
 
   private installPackages(packages: string[]) {
-    execSync(`npm install ${packages.join(' ')} --save-dev`, { cwd: this.projectPath });
+    execSync(`npm install ${packages.join(' ')}`, { cwd: this.projectPath });
   }
 }
