@@ -13,7 +13,7 @@
     "prepack": "npm run build"
   },
   "keywords": ["npm", "imports", "dependencies", "typescript", "framework-agnostic"],
-  "author": "Your Name",
+  "author": "Avnish Jha",
   "license": "MIT",
   "dependencies": {
     "ts-morph": "^16.0.0"
