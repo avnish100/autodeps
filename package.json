@@ -1,0 +1,28 @@
+{
+  "name": "autodeps",
+  "version": "1.0.1",
+  "description": "Automatically detect missing or unused imports and update packages while preserving essential dependencies",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "autodeps": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "prepack": "npm run build"
+  },
+  "keywords": ["npm", "imports", "dependencies", "typescript", "framework-agnostic"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "ts-morph": "^16.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.12",
+    "typescript": "^4.5.4"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.0.0"
+  }
+}

@@ -1,0 +1,40 @@
+# Node.js modules
+node_modules/
+
+# Compiled output
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs_analysis.dat
+*.njsproj
+*.sln
+
+# Yarn
+.yarn/
+.pnp.*
+.yarnrc.yml
+
+# npm package lock
+package-lock.json
+
+# npm-debug.log
+npm-debug.log*
