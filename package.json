@@ -1,5 +1,5 @@
 {
-  "name": "autodeps",
+  "name": "@avnish100/autodeps",
   "version": "1.0.1",
   "description": "Automatically detect missing or unused imports and update packages while preserving essential dependencies",
   "main": "dist/index.js",
