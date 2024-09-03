@@ -22,7 +22,8 @@ export class ImportManager {
     '@types/node',
     'typescript',
     'eslint',
-    'eslint-config-next'
+    'eslint-config-next',
+    'postcss'
   ]);
 
   constructor(private projectPath: string = process.cwd()) {
